@@ -13,6 +13,12 @@ def render_login_page(auth_service):
         if not username.strip() or not password.strip():
             st.error("Please enter both username and password.")
             return False
+        loading = st.empty()
+        loading.markdown(
+            '<div class="loading-orb"></div><div class="loading-copy">'
+            "Signing you in securely. Please wait...</div>",
+            unsafe_allow_html=True,
+        )
         with st.status("Connecting securely to ELMS...", expanded=True) as login_status:
             ok = auth_service.login(username.strip(), password)
             login_status.update(
@@ -20,6 +26,7 @@ def render_login_page(auth_service):
                 state="complete" if ok else "error",
                 expanded=False,
             )
+        loading.empty()
         if ok:
             st.success("Login successful.")
             return True

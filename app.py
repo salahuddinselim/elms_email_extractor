@@ -36,6 +36,7 @@ def _render_sidebar(auth_service: AuthenticationService):
     st.sidebar.subheader("Workspace")
     if st.sidebar.button("Course Evaluation · Upcoming", use_container_width=True):
         st.session_state.show_course_evaluation = True
+        st.session_state.show_github_note = False
     st.sidebar.link_button(
         "Open GitHub repository",
         "https://github.com/salahuddinselim/elms_email_extractor",
@@ -71,7 +72,7 @@ def main():
         [data-testid="stDeployButton"] {{ display: none !important; }}
         [data-testid="stSidebar"] {{ background: #f1630d; border-right: 1px solid #d04e08; }}
         [data-testid="stSidebar"] * {{ color: #000000 !important; }}
-        [data-testid="stSidebar"] button, [data-testid="stSidebar"] a {{ background: #ffffff; border: 1px solid #b7c8d6; color: #000000 !important; }}
+        [data-testid="stSidebar"] button, [data-testid="stSidebar"] a {{ background: #ffffff; border: 1px solid #d04e08; color: #000000 !important; }}
         [data-testid="stSidebar"] button:hover, [data-testid="stSidebar"] a:hover {{ border-color: #132238; color: #ffffff !important; background: #132238; }}
         [data-testid="stMainBlockContainer"] {{ background: {colors["page"]}; }}
         [data-testid="stExpander"], [data-testid="stMetric"], [data-testid="stDataFrame"] {{ background: {colors["surface"]}; border-color: var(--line); }}
@@ -82,14 +83,15 @@ def main():
         [data-testid="stTextInput"] input::placeholder, [data-testid="stTextArea"] textarea::placeholder {{ color: {colors["muted"]}; opacity: 1; }}
         [data-testid="stSelectbox"] [role="combobox"] {{ color: var(--ink); }}
         .stButton > button, [data-testid="stDownloadButton"] button, [data-testid="stLinkButton"] a {{
-            border: 1px solid {colors["primary"]};
-            color: {colors["primary"]};
-            background: transparent;
+            border: 1px solid #d04e08;
+            color: #000000;
+            background: #f1630d;
+            font-weight: 700;
         }}
         .stButton > button:hover, [data-testid="stDownloadButton"] button:hover, [data-testid="stLinkButton"] a:hover {{
-            border-color: #f28c28;
-            color: #f28c28;
-            background: rgba(242, 140, 40, .1);
+            border-color: #132238;
+            color: #ffffff;
+            background: #132238;
         }}
         .brand-mark {{ display: flex; gap: .75rem; align-items: center; margin: .25rem 0 1.75rem; }}
         .brand-mark strong {{ font-size: 1.15rem; letter-spacing: -.02em; }}
@@ -98,7 +100,17 @@ def main():
         .hero {{ border-bottom: 1px solid var(--line); padding-bottom: 1.25rem; margin-bottom: 1.5rem; }}
         .hero p, .muted {{ color: var(--muted); }}
         .footer {{ border-top: 1px solid var(--line); margin-top: 3rem; padding: 1.25rem 0 2rem; color: var(--muted); font-size: .82rem; text-align: center; }}
-        .stButton > button[kind="primary"] {{ background: {colors["primary"]}; border-color: {colors["primary"]}; color: #06121f; }}
+        .stButton > button[kind="primary"] {{ background: #d95409; border-color: #b94306; color: #ffffff; }}
+        .loading-orb {{
+            width: 42px; height: 42px; margin: 0.75rem 0;
+            border: 4px solid rgba(241, 99, 13, .2);
+            border-top-color: #f1630d;
+            border-right-color: #132238;
+            border-radius: 50%;
+            animation: sabrware-spin .8s linear infinite;
+        }}
+        .loading-copy {{ color: #607087; font-weight: 600; margin-bottom: .75rem; }}
+        @keyframes sabrware-spin {{ to {{ transform: rotate(360deg); }} }}
         </style>
         """,
         unsafe_allow_html=True,
@@ -141,6 +153,12 @@ def main():
             st.error("No course IDs found to extract.")
             return
 
+        loading = st.empty()
+        loading.markdown(
+            '<div class="loading-orb"></div><div class="loading-copy">'
+            "Collecting participant records. Thanks for your patience...</div>",
+            unsafe_allow_html=True,
+        )
         with st.status("Extracting participant records...", expanded=True) as extraction_status:
             progress = st.progress(0.0)
             all_records = []
@@ -172,31 +190,51 @@ def main():
                 state="complete",
                 expanded=False,
             )
+        loading.empty()
 
         st.success(f"Extraction finished for {len(target_course_ids)} course(s).")
+
+    def extract_all_courses() -> None:
+        loading = st.empty()
+        loading.markdown(
+            '<div class="loading-orb"></div><div class="loading-copy">'
+            "Finding your enrolled courses. Please wait...</div>",
+            unsafe_allow_html=True,
+        )
+        course_ids = extractor.get_all_course_ids()
+        loading.empty()
+        run_extraction(course_ids, multi_course=True)
 
     st.sidebar.markdown("---")
     st.sidebar.subheader("Quick Actions")
     if st.sidebar.button("Extract All Courses", type="primary", use_container_width=True):
-        run_extraction(extractor.get_all_course_ids(), multi_course=True)
+        extract_all_courses()
     if st.sidebar.button("Load Course Name/ID List", use_container_width=True):
+        loading = st.empty()
+        loading.markdown(
+            '<div class="loading-orb"></div><div class="loading-copy">'
+            "Loading your enrolled courses. Please wait...</div>",
+            unsafe_allow_html=True,
+        )
         st.session_state.course_map = extractor.get_all_course_name_map()
+        loading.empty()
 
     st.subheader("Quick Actions")
     st.caption("No course IDs needed for Extract All Courses.")
     action_col1, action_col2, action_col3 = st.columns([1, 1, 1])
 
     if action_col1.button("Show All Course ID with Name", use_container_width=True):
-        with st.status("Loading enrolled courses...", expanded=True) as course_status:
-            st.session_state.course_map = extractor.get_all_course_name_map()
-            course_status.update(
-                label="Course list loaded.",
-                state="complete",
-                expanded=False,
-            )
+        loading = st.empty()
+        loading.markdown(
+            '<div class="loading-orb"></div><div class="loading-copy">'
+            "Loading your enrolled courses. Please wait...</div>",
+            unsafe_allow_html=True,
+        )
+        st.session_state.course_map = extractor.get_all_course_name_map()
+        loading.empty()
 
     if action_col2.button("Extract All Courses", type="primary", use_container_width=True):
-        run_extraction(extractor.get_all_course_ids(), multi_course=True)
+        extract_all_courses()
 
     if action_col3.button("Clear Results", use_container_width=True):
         st.session_state.pop("processed", None)
