@@ -29,8 +29,6 @@ and produces searchable, filterable reports without writing credentials to disk.
 - Includes a group email composer with an editable subject/body template and a
   single CC list for a course section. It opens the user's local email client
   and never sends or stores messages.
-- Includes an SMS composer that prepares an `sms:` link from locally entered
-  phone numbers and message text. It does not send or store SMS messages.
 - Uses a focused UIU-inspired light theme with SabrWare rights notices and
   readable controls.
 - The orange sidebar uses `#f1630d`, with black text and navy/white hover
@@ -136,8 +134,6 @@ pytest -q
   Keep the browser open and avoid starting duplicate extractions.
 - **Email client does not open:** Copy the generated CC list and template into
   your mail provider manually. Very large sections may exceed mailto URL limits.
-- **SMS app does not open:** Copy the prepared phone numbers and message into
-  your device's messaging application. Desktop browsers may not support `sms:`.
 
 ## Ownership
 

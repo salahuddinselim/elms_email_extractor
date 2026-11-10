@@ -1,7 +1,6 @@
 import streamlit as st
 from components.email_ui import render_email_composer
 from modules.excel_exporter import generate_csv_bytes, generate_excel_bytes
-from components.sms_ui import render_sms_composer
 
 
 def render_export_ui(processed: dict, multi_course: bool, selected_course: str = "All"):
@@ -65,5 +64,3 @@ def render_export_ui(processed: dict, multi_course: bool, selected_course: str =
 
     st.divider()
     render_email_composer(processed, selected_course=selected_course)
-    st.divider()
-    render_sms_composer()

@@ -73,7 +73,7 @@ def main():
         [data-testid="stSidebar"] {{ background: #f1630d; border-right: 1px solid #d04e08; }}
         [data-testid="stSidebar"] * {{ color: #000000 !important; }}
         [data-testid="stSidebar"] button, [data-testid="stSidebar"] a {{ background: #ffffff; border: 1px solid #d04e08; color: #000000 !important; }}
-        [data-testid="stSidebar"] button:hover, [data-testid="stSidebar"] a:hover {{ border-color: #132238; color: #ffffff !important; background: #132238; }}
+        [data-testid="stSidebar"] button:hover, [data-testid="stSidebar"] a:hover {{ border-color: #d04e08; color: #132238 !important; background: #fff7ed; }}
         [data-testid="stMainBlockContainer"] {{ background: {colors["page"]}; }}
         [data-testid="stExpander"], [data-testid="stMetric"], [data-testid="stDataFrame"] {{ background: {colors["surface"]}; border-color: var(--line); }}
         [data-baseweb="input"], [data-baseweb="textarea"] {{ background: {colors["surface"]}; border-color: var(--line); }}
@@ -89,9 +89,9 @@ def main():
             font-weight: 700;
         }}
         .stButton > button:hover, [data-testid="stDownloadButton"] button:hover, [data-testid="stLinkButton"] a:hover {{
-            border-color: #132238;
-            color: #ffffff;
-            background: #132238;
+            border-color: #d04e08;
+            color: #132238;
+            background: #fff7ed;
         }}
         .brand-mark {{ display: flex; gap: .75rem; align-items: center; margin: .25rem 0 1.75rem; }}
         .brand-mark strong {{ font-size: 1.15rem; letter-spacing: -.02em; }}

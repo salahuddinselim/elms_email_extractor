@@ -159,14 +159,18 @@ class CourseExtractor:
             if not email_tag:
                 continue
             href = (email_tag.get("href") or "").strip().lower()
-            if href.startswith("mailto:"):
-                txt = email_tag.get_text(strip=True)
-                if txt:
-                    return txt
+            txt = email_tag.get_text(strip=True)
+            if txt and (href.startswith("mailto:") or "@" in txt):
+                return txt
 
         mailto = profile_soup.select_one('a[href^="mailto:"]')
         if mailto and mailto.get_text(strip=True):
             return mailto.get_text(strip=True)
+
+        for node in profile_soup.select("a[href]"):
+            text = node.get_text(strip=True)
+            if text and "@" in text:
+                return text
         return ""
 
     def _extract_name(self, profile_soup: BeautifulSoup) -> str:
