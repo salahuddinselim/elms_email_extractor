@@ -1,0 +1,25 @@
+import streamlit as st
+
+
+def render_login_page(auth_service):
+    st.subheader("Login")
+
+    with st.form("login_form"):
+        username = st.text_input("ELMS Username / Student ID")
+        password = st.text_input("ELMS Password", type="password")
+        submitted = st.form_submit_button("Login")
+
+    if submitted:
+        if not username.strip() or not password.strip():
+            st.error("Please enter both username and password.")
+            return False
+        with st.spinner("Authenticating with ELMS..."):
+            ok = auth_service.login(username.strip(), password)
+        if ok:
+            st.success("Login successful.")
+            return True
+        st.error(auth_service.last_error or "Authentication failed.")
+
+    st.info("Credentials are never stored in files or logs.")
+    return False
+
