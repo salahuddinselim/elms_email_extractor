@@ -26,14 +26,18 @@ def _get_auth_service() -> AuthenticationService:
 
 
 def _render_sidebar(auth_service: AuthenticationService):
-    st.sidebar.markdown("## SabrWare")
-    st.sidebar.caption("ELMS student workspace")
+    st.sidebar.caption("## ELMS student workspace")
     st.sidebar.caption("© 2026 SabrWare · All rights reserved")
     logo_path = Path("assets/logo.png")
     if logo_path.exists():
         st.sidebar.image(str(logo_path), use_container_width=True)
 
     st.sidebar.markdown("---")
+    st.sidebar.subheader("Workspace")
+    if st.sidebar.button("Course Evaluation · Upcoming", use_container_width=True):
+        st.session_state.show_course_evaluation = True
+    if st.sidebar.button("GitHub repository", use_container_width=True):
+        st.session_state.show_github_note = True
     status = "Authenticated" if auth_service.is_authenticated else "Logged out"
     st.sidebar.write(f"Status: **{status}**")
     if auth_service.is_authenticated and st.sidebar.button("Logout", use_container_width=True):
@@ -52,7 +56,7 @@ def main():
         "ink": "#132238",
         "muted": "#607087",
         "line": "#dce5ef",
-        "sidebar": "#102a43",
+        "sidebar": "#f1630d",
         "primary": "#0e7490",
     }
     st.markdown(
@@ -62,8 +66,10 @@ def main():
         .stApp {{ background: {colors["page"]}; color: var(--ink); }}
         [data-testid="stHeader"] {{ background: {colors["page"]}; }}
         [data-testid="stDeployButton"] {{ display: none !important; }}
-        [data-testid="stSidebar"] {{ background: {colors["sidebar"]}; }}
-        [data-testid="stSidebar"] * {{ color: #e8f1f7 !important; }}
+        [data-testid="stSidebar"] {{ background: #f3f7fa; border-right: 1px solid #dce5ef; }}
+        [data-testid="stSidebar"] * {{ color: #000000 !important; }}
+        [data-testid="stSidebar"] button {{ background: #ffffff; border-color: #b7c8d6; color: #000000 !important; }}
+        [data-testid="stSidebar"] button:hover {{ border-color: #f28c28; color: #000000 !important; background: #fff7ed; }}
         [data-testid="stMainBlockContainer"] {{ background: {colors["page"]}; }}
         [data-testid="stExpander"], [data-testid="stMetric"], [data-testid="stDataFrame"] {{ background: {colors["surface"]}; border-color: var(--line); }}
         [data-baseweb="input"], [data-baseweb="textarea"] {{ background: {colors["surface"]}; border-color: var(--line); }}
@@ -107,6 +113,14 @@ def main():
         '<p>Extract enrolled course participants, explore the dataset, and export clean reports from one focused workspace.</p></div>',
         unsafe_allow_html=True,
     )
+    if st.session_state.get("show_course_evaluation"):
+        st.info("Course Evaluation is upcoming. This workspace will support evaluation collection and reporting in a future release.")
+    if st.session_state.get("show_github_note"):
+        st.success("Thank you for using SabrWare ELMS tools. If this project helps you, please consider starring it on GitHub.")
+        st.link_button(
+            "Star the project on GitHub",
+            "https://github.com/salahuddinselim/elms_email_extractor",
+        )
     with st.expander("How to use", expanded=False):
         st.markdown(
             "1. Login with your ELMS account.\n"
