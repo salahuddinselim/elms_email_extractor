@@ -29,16 +29,15 @@ and produces searchable, filterable reports without writing credentials to disk.
 - Includes a group email composer with an editable subject/body template and a
   single CC list for a course section. It opens the user's local email client
   and never sends or stores messages.
-- Includes a persistent light/dark mode switch in the sidebar with SabrWare
-  rights notices in both the sidebar and login/results views.
+- Uses a focused UIU-inspired light theme with SabrWare rights notices and
+  readable controls.
 
 ## Visual theme
 
 The interface uses a UIU-inspired palette based on publicly described UIU
 visual guidance: deep navy for structure, teal for action, white/gray for
-surfaces, and orange for hover emphasis. The sidebar theme switch preserves
-the palette in both light and dark modes, including username/password
-placeholders, text inputs, download buttons, and links.
+surfaces, and orange for hover emphasis. Inputs, placeholders, download
+buttons, and links share the same light-theme treatment.
 
 ## Important authorization notice
 

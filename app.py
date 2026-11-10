@@ -36,11 +36,6 @@ def _render_sidebar(auth_service: AuthenticationService):
     st.sidebar.markdown("---")
     status = "Authenticated" if auth_service.is_authenticated else "Logged out"
     st.sidebar.write(f"Status: **{status}**")
-    theme_label = "Switch to light mode" if st.session_state.get("dark_mode", False) else "Switch to dark mode"
-    if st.sidebar.button(theme_label, use_container_width=True):
-        st.session_state.dark_mode = not st.session_state.get("dark_mode", False)
-        st.rerun()
-
     if auth_service.is_authenticated and st.sidebar.button("Logout", use_container_width=True):
         auth_service.logout()
         st.session_state.pop("processed", None)
@@ -51,15 +46,14 @@ def _render_sidebar(auth_service: AuthenticationService):
 
 def main():
     st.set_page_config(page_title="UIU ELMS Student Extractor", page_icon="🎓", layout="wide")
-    dark_mode = st.session_state.get("dark_mode", False)
     colors = {
-        "page": "#0b1726" if dark_mode else "#f7fafc",
-        "surface": "#12243a" if dark_mode else "#ffffff",
-        "ink": "#e6f0f7" if dark_mode else "#132238",
-        "muted": "#a8bbca" if dark_mode else "#607087",
-        "line": "#29445d" if dark_mode else "#dce5ef",
-        "sidebar": "#07111e" if dark_mode else "#102a43",
-        "primary": "#2dd4bf" if dark_mode else "#0e7490",
+        "page": "#f7fafc",
+        "surface": "#ffffff",
+        "ink": "#132238",
+        "muted": "#607087",
+        "line": "#dce5ef",
+        "sidebar": "#102a43",
+        "primary": "#0e7490",
     }
     st.markdown(
         f"""
@@ -67,6 +61,7 @@ def main():
         :root {{ --ink: {colors["ink"]}; --muted: {colors["muted"]}; --line: {colors["line"]}; --accent: {colors["primary"]}; }}
         .stApp {{ background: {colors["page"]}; color: var(--ink); }}
         [data-testid="stHeader"] {{ background: {colors["page"]}; }}
+        [data-testid="stDeployButton"] {{ display: none !important; }}
         [data-testid="stSidebar"] {{ background: {colors["sidebar"]}; }}
         [data-testid="stSidebar"] * {{ color: #e8f1f7 !important; }}
         [data-testid="stMainBlockContainer"] {{ background: {colors["page"]}; }}
