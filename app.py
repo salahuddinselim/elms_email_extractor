@@ -36,8 +36,10 @@ def _render_sidebar(auth_service: AuthenticationService):
     st.sidebar.subheader("Workspace")
     if st.sidebar.button("Course Evaluation · Upcoming", use_container_width=True):
         st.session_state.show_course_evaluation = True
+        st.session_state.show_github_note = False
     if st.sidebar.button("GitHub repository", use_container_width=True):
         st.session_state.show_github_note = True
+        st.session_state.show_course_evaluation = False
     status = "Authenticated" if auth_service.is_authenticated else "Logged out"
     st.sidebar.write(f"Status: **{status}**")
     if auth_service.is_authenticated and st.sidebar.button("Logout", use_container_width=True):
@@ -66,10 +68,10 @@ def main():
         .stApp {{ background: {colors["page"]}; color: var(--ink); }}
         [data-testid="stHeader"] {{ background: {colors["page"]}; }}
         [data-testid="stDeployButton"] {{ display: none !important; }}
-        [data-testid="stSidebar"] {{ background: #f3f7fa; border-right: 1px solid #dce5ef; }}
+        [data-testid="stSidebar"] {{ background: #f1630d; border-right: 1px solid #d04e08; }}
         [data-testid="stSidebar"] * {{ color: #000000 !important; }}
         [data-testid="stSidebar"] button {{ background: #ffffff; border-color: #b7c8d6; color: #000000 !important; }}
-        [data-testid="stSidebar"] button:hover {{ border-color: #f28c28; color: #000000 !important; background: #fff7ed; }}
+        [data-testid="stSidebar"] button:hover {{ border-color: #132238; color: #000000 !important; background: #fff7ed; }}
         [data-testid="stMainBlockContainer"] {{ background: {colors["page"]}; }}
         [data-testid="stExpander"], [data-testid="stMetric"], [data-testid="stDataFrame"] {{ background: {colors["surface"]}; border-color: var(--line); }}
         [data-baseweb="input"], [data-baseweb="textarea"] {{ background: {colors["surface"]}; border-color: var(--line); }}
