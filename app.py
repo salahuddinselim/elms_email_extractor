@@ -30,21 +30,21 @@ def _render_sidebar(auth_service: AuthenticationService):
     st.sidebar.caption("© 2026 SabrWare · All rights reserved")
     logo_path = Path("assets/logo.png")
     if logo_path.exists():
-        st.sidebar.image(str(logo_path), use_container_width=True)
+        st.sidebar.image(str(logo_path), width="stretch")
 
     st.sidebar.markdown("---")
     st.sidebar.subheader("Workspace")
-    if st.sidebar.button("Course Evaluation · Upcoming", use_container_width=True):
+    if st.sidebar.button("Course Evaluation · Upcoming", width="stretch"):
         st.session_state.show_course_evaluation = True
         st.session_state.show_github_note = False
     st.sidebar.link_button(
         "Open GitHub repository",
         "https://github.com/salahuddinselim/elms_email_extractor",
-        use_container_width=True,
+        width="stretch",
     )
     status = "Authenticated" if auth_service.is_authenticated else "Logged out"
     st.sidebar.write(f"Status: **{status}**")
-    if auth_service.is_authenticated and st.sidebar.button("Logout", use_container_width=True):
+    if auth_service.is_authenticated and st.sidebar.button("Logout", width="stretch"):
         auth_service.logout()
         st.session_state.pop("processed", None)
         st.session_state.pop("logs", None)
@@ -207,9 +207,9 @@ def main():
 
     st.sidebar.markdown("---")
     st.sidebar.subheader("Quick Actions")
-    if st.sidebar.button("Extract All Courses", type="primary", use_container_width=True):
+    if st.sidebar.button("Extract All Courses", type="primary", width="stretch"):
         extract_all_courses()
-    if st.sidebar.button("Load Course Name/ID List", use_container_width=True):
+    if st.sidebar.button("Load Course Name/ID List", width="stretch"):
         loading = st.empty()
         loading.markdown(
             '<div class="loading-orb"></div><div class="loading-copy">'
@@ -223,7 +223,7 @@ def main():
     st.caption("No course IDs needed for Extract All Courses.")
     action_col1, action_col2, action_col3 = st.columns([1, 1, 1])
 
-    if action_col1.button("Show All Course ID with Name", use_container_width=True):
+    if action_col1.button("Show All Course ID with Name", width="stretch"):
         loading = st.empty()
         loading.markdown(
             '<div class="loading-orb"></div><div class="loading-copy">'
@@ -233,10 +233,10 @@ def main():
         st.session_state.course_map = extractor.get_all_course_name_map()
         loading.empty()
 
-    if action_col2.button("Extract All Courses", type="primary", use_container_width=True):
+    if action_col2.button("Extract All Courses", type="primary", width="stretch"):
         extract_all_courses()
 
-    if action_col3.button("Clear Results", use_container_width=True):
+    if action_col3.button("Clear Results", width="stretch"):
         st.session_state.pop("processed", None)
         st.session_state.pop("logs", None)
         st.success("Cleared previous results.")
@@ -244,7 +244,7 @@ def main():
     if st.session_state.get("course_map"):
         st.markdown("**Enrolled Courses (Name to ID)**")
         rows = [{"Course Name": k, "Course ID": v} for k, v in st.session_state["course_map"].items()]
-        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
     st.divider()
     mode, course_ids, can_extract = render_dashboard()

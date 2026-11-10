@@ -16,7 +16,7 @@ def render_results(processed: dict, extraction_logs: list[dict]) -> str:
 
     if extraction_logs:
         st.markdown("**Extraction Log**")
-        st.dataframe(extraction_logs, use_container_width=True, hide_index=True)
+        st.dataframe(extraction_logs, width="stretch", hide_index=True)
 
     students_df = processed["students"]
     coursewise_df = processed.get("coursewise")
@@ -97,16 +97,16 @@ def render_results(processed: dict, extraction_logs: list[dict]) -> str:
     ).reset_index(drop=True)
 
     st.caption(f"Showing {len(filtered):,} record(s)")
-    st.dataframe(filtered, use_container_width=True, hide_index=True)
+    st.dataframe(filtered, width="stretch", hide_index=True)
 
     if not processed["invalid"].empty:
         st.markdown("**Invalid Records**")
-        st.dataframe(processed["invalid"], use_container_width=True, hide_index=True)
+        st.dataframe(processed["invalid"], width="stretch", hide_index=True)
 
     staff_df = processed.get("staff")
     if staff_df is not None and not staff_df.empty:
         with st.expander("Teachers and staff without student IDs"):
             st.caption("These records are kept without fabricated IDs and are available for email composition.")
-            st.dataframe(staff_df, use_container_width=True, hide_index=True)
+            st.dataframe(staff_df, width="stretch", hide_index=True)
 
     return selected_course
