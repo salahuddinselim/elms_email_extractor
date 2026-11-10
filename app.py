@@ -36,10 +36,11 @@ def _render_sidebar(auth_service: AuthenticationService):
     st.sidebar.subheader("Workspace")
     if st.sidebar.button("Course Evaluation · Upcoming", use_container_width=True):
         st.session_state.show_course_evaluation = True
-        st.session_state.show_github_note = False
-    if st.sidebar.button("GitHub repository", use_container_width=True):
-        st.session_state.show_github_note = True
-        st.session_state.show_course_evaluation = False
+    st.sidebar.link_button(
+        "Open GitHub repository",
+        "https://github.com/salahuddinselim/elms_email_extractor",
+        use_container_width=True,
+    )
     status = "Authenticated" if auth_service.is_authenticated else "Logged out"
     st.sidebar.write(f"Status: **{status}**")
     if auth_service.is_authenticated and st.sidebar.button("Logout", use_container_width=True):
@@ -70,8 +71,8 @@ def main():
         [data-testid="stDeployButton"] {{ display: none !important; }}
         [data-testid="stSidebar"] {{ background: #f1630d; border-right: 1px solid #d04e08; }}
         [data-testid="stSidebar"] * {{ color: #000000 !important; }}
-        [data-testid="stSidebar"] button {{ background: #ffffff; border-color: #b7c8d6; color: #000000 !important; }}
-        [data-testid="stSidebar"] button:hover {{ border-color: #132238; color: #000000 !important; background: #fff7ed; }}
+        [data-testid="stSidebar"] button, [data-testid="stSidebar"] a {{ background: #ffffff; border: 1px solid #b7c8d6; color: #000000 !important; }}
+        [data-testid="stSidebar"] button:hover, [data-testid="stSidebar"] a:hover {{ border-color: #132238; color: #ffffff !important; background: #132238; }}
         [data-testid="stMainBlockContainer"] {{ background: {colors["page"]}; }}
         [data-testid="stExpander"], [data-testid="stMetric"], [data-testid="stDataFrame"] {{ background: {colors["surface"]}; border-color: var(--line); }}
         [data-baseweb="input"], [data-baseweb="textarea"] {{ background: {colors["surface"]}; border-color: var(--line); }}
@@ -117,12 +118,7 @@ def main():
     )
     if st.session_state.get("show_course_evaluation"):
         st.info("Course Evaluation is upcoming. This workspace will support evaluation collection and reporting in a future release.")
-    if st.session_state.get("show_github_note"):
-        st.success("Thank you for using SabrWare ELMS tools. If this project helps you, please consider starring it on GitHub.")
-        st.link_button(
-            "Star the project on GitHub",
-            "https://github.com/salahuddinselim/elms_email_extractor",
-        )
+    st.caption("Thank you for using SabrWare ELMS tools. If this project helps you, please consider starring it on GitHub.")
     with st.expander("How to use", expanded=False):
         st.markdown(
             "1. Login with your ELMS account.\n"
@@ -145,7 +141,7 @@ def main():
             st.error("No course IDs found to extract.")
             return
 
-        with st.spinner("Extracting participant records..."):
+        with st.status("Extracting participant records...", expanded=True) as extraction_status:
             progress = st.progress(0.0)
             all_records = []
             logs = []
@@ -163,10 +159,19 @@ def main():
                     }
                 )
                 progress.progress(idx / total)
+                extraction_status.update(
+                    label=f"Processed course {idx} of {total}. Thanks for your patience.",
+                    state="running",
+                )
 
             st.session_state.processed = process_records(all_records)
             st.session_state.logs = logs
             st.session_state.last_multi_course = multi_course
+            extraction_status.update(
+                label="Extraction complete. Your workspace is ready.",
+                state="complete",
+                expanded=False,
+            )
 
         st.success(f"Extraction finished for {len(target_course_ids)} course(s).")
 
@@ -182,8 +187,13 @@ def main():
     action_col1, action_col2, action_col3 = st.columns([1, 1, 1])
 
     if action_col1.button("Show All Course ID with Name", use_container_width=True):
-        with st.spinner("Loading enrolled courses..."):
+        with st.status("Loading enrolled courses...", expanded=True) as course_status:
             st.session_state.course_map = extractor.get_all_course_name_map()
+            course_status.update(
+                label="Course list loaded.",
+                state="complete",
+                expanded=False,
+            )
 
     if action_col2.button("Extract All Courses", type="primary", use_container_width=True):
         run_extraction(extractor.get_all_course_ids(), multi_course=True)

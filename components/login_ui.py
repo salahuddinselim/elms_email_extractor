@@ -13,8 +13,13 @@ def render_login_page(auth_service):
         if not username.strip() or not password.strip():
             st.error("Please enter both username and password.")
             return False
-        with st.spinner("Authenticating with ELMS..."):
+        with st.status("Connecting securely to ELMS...", expanded=True) as login_status:
             ok = auth_service.login(username.strip(), password)
+            login_status.update(
+                label="Authentication complete." if ok else "Authentication could not be completed.",
+                state="complete" if ok else "error",
+                expanded=False,
+            )
         if ok:
             st.success("Login successful.")
             return True
@@ -22,4 +27,3 @@ def render_login_page(auth_service):
 
     st.info("Credentials are never stored in files or logs.")
     return False
-
